@@ -1,0 +1,60 @@
+# Configure jinja2 defaults to make syntax highlighters happy
+_templates_suffix: .jinja
+_subdirectory: src
+_answers_file: .copier-answers-personal.yml
+
+env:
+  type: str
+  default: dev
+  when: true
+
+project_name:
+  type: str
+  help: Project Name
+
+prefix_domain:
+  type: str
+  default: "{{ project_name | lower | urlencode }}"
+  help: "Should be a valid subdomain"
+
+branch_name:
+  type: str
+  help: "name of the current branch"
+  default: ""
+
+suffix_domain:
+    type: str
+    help: "after the dot"
+    default: |-
+      {% if env == 'dev' -%}
+          localhost
+      {%- elif env == 'ci' -%}
+          ci-akretion.com
+      {%- endif %}
+    when: "{{ env != 'dev' }}"
+
+compose_project_name:
+  type: str
+  help: "used by docker compose"
+  default: "{{ (prefix_domain ~ '_' ~ branch_name) | replace('.','-') }}"
+  # dot interfer with traefik labels
+  # secret && !when : do not display the question but regenerate
+  # at each run
+  secret: true
+  when: false
+
+domain:
+  type: str
+  help: "prefix_branch_name.domain"
+  default: "{{ compose_project_name ~ '.' ~ suffix_domain }}"
+  secret: true
+  when: false
+
+#adminer:
+#py3o:
+
+#_tasks:
+#  # inject UID/GID
+#  - "echo UID=`id -u` >> .env"
+#  - "echo GID=`id -g` >> .env"
+# # use adminer ?

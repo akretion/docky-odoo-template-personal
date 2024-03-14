@@ -1,0 +1,6 @@
+.db/
+odoo/src/
+odoo/external-src/
+odoo/links/
+data/odoo/filestore/
+.copier-answers-personal.yml
